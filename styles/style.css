@@ -26,6 +26,9 @@ body.modal-open { overflow: hidden; }
 
 a { color: inherit; text-decoration: none; }
 
+.dropdown-nav[hidden],
+.modal[hidden] { display: none !important; }
+
 .site-header {
   position: sticky;
   top: 0;
