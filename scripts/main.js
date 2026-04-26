@@ -1,65 +1,38 @@
 (function () {
-  const dropdown = document.querySelector('[data-dropdown]');
-  const toggle = document.querySelector('[data-menu-toggle]');
-
-  if (toggle && dropdown) {
-    toggle.addEventListener('click', function () {
-      dropdown.classList.toggle('open');
-      toggle.setAttribute('aria-expanded', dropdown.classList.contains('open') ? 'true' : 'false');
-    });
-
-    document.addEventListener('click', function (event) {
-      if (!event.target.closest('.nav-wrap')) {
-        dropdown.classList.remove('open');
-        toggle.setAttribute('aria-expanded', 'false');
-      }
-    });
-  }
-
-  const path = window.location.pathname.replace(/index\.html$/, '').replace(/\/$/, '');
+  const path = window.location.pathname.replace(/\/$/, '');
   document.querySelectorAll('[data-nav]').forEach((link) => {
-    const href = link.getAttribute('href');
-    const absolute = new URL(href, window.location.href);
-    const targetPath = absolute.pathname.replace(/index\.html$/, '').replace(/\/$/, '');
-    if (path === targetPath) link.classList.add('active');
+    const target = link.getAttribute('href').replace(/\/$/, '');
+    if (target && path.endsWith(target)) {
+      link.classList.add('active');
+    }
   });
 
-  const newsletter = document.querySelector('[data-newsletter]');
-  if (newsletter) {
-    const emailInput = newsletter.querySelector('input[type="email"]');
-    const status = newsletter.querySelector('.form-status');
+  const form = document.querySelector('[data-newsletter]');
+  if (form) {
+    const emailField = form.querySelector('input[type="email"]');
+    const status = form.querySelector('.form-status');
 
-    const existing = localStorage.getItem('saintfcloud_newsletter_email');
-    if (existing && status) {
-      status.textContent = `SUBSCRIBED: ${existing}`;
+    const stored = localStorage.getItem('saintfcloud_newsletter_email');
+    if (stored && status) {
+      status.textContent = `You're subscribed with ${stored}.`;
       status.className = 'form-status success';
     }
 
-    newsletter.addEventListener('submit', function (event) {
+    form.addEventListener('submit', (event) => {
       event.preventDefault();
-      const email = emailInput.value.trim();
-      const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-      if (!valid) {
-        status.textContent = 'ENTER A VALID EMAIL ADDRESS';
+      const email = emailField.value.trim();
+      const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+      if (!ok) {
+        status.textContent = 'Please enter a valid email address.';
         status.className = 'form-status error';
         return;
       }
+
       localStorage.setItem('saintfcloud_newsletter_email', email);
-      status.textContent = 'SUBSCRIPTION COMPLETE';
+      status.textContent = `Subscribed. We'll send updates to ${email}.`;
       status.className = 'form-status success';
-      newsletter.reset();
-    });
-  }
-
-  const popup = document.querySelector('[data-popup]');
-  const closeBtn = document.querySelector('[data-popup-close]');
-  if (popup && closeBtn) {
-    const seen = localStorage.getItem('saintfcloud_welcome_seen');
-    if (!seen) popup.classList.add('open');
-
-    closeBtn.addEventListener('click', function () {
-      popup.classList.remove('open');
-      localStorage.setItem('saintfcloud_welcome_seen', 'yes');
+      form.reset();
     });
   }
 })();
