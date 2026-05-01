@@ -60,6 +60,7 @@
 
   const navToggle = document.querySelector('[data-menu-toggle]');
   const navMenu = document.querySelector('[data-menu]');
+  const navWrap = document.querySelector('.menu-wrap');
   const closeMenu = () => {
     if (!navToggle || !navMenu) return;
     navToggle.setAttribute('aria-expanded', 'false');
@@ -87,6 +88,12 @@
     navMenu.querySelectorAll('a').forEach((link) => {
       link.addEventListener('click', closeMenu);
     });
+
+    if (navWrap) {
+      navWrap.addEventListener('mouseleave', () => {
+        if (!navMenu.hidden) closeMenu();
+      });
+    }
 
     window.addEventListener('resize', () => {
       if (window.innerWidth > 860) closeMenu();
